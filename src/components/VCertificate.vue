@@ -8,7 +8,7 @@
             :key="variable.name"
             role="presentation"
           >
-            <b-button role="menuitem" @click="setVariable(variable)">
+            <b-button role="menuitem" @click="addVariable(variable)">
               {{ variable.name }}
             </b-button>
           </li>
@@ -153,7 +153,7 @@ export default {
       variables: [
         { text: "[ALUNO]", name: "Aluno" },
         { text: "[INSTRUTOR]", name: "Instrutor" },
-        { text: "[CARGA_HORARIA]]", name: "Carga horária" },
+        { text: "[CARGA_HORARIA]", name: "Carga horária" },
         { text: "[CPF]", name: "CPF" },
         { text: "[CURSO]", name: "Curso" },
         { text: "[DATA_DE_CADASTRO]", name: "Data de cadastro" },
@@ -212,9 +212,7 @@ export default {
         textAlign: textBox.style.textAlign
       });
     },
-    setVariable(variable) {
-      console.log(variable);
-    },
+
     setFontFamily(font) {
       this.changeElementStyle(() => {
         this.certificate.itemSelected.style.setFontFamily(font);
@@ -247,10 +245,28 @@ export default {
         });
       }
     },
+    addVariable(variable) {
+      if (this.certificate.itemSelected && this.certificate.itemSelected.id) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) {
+          this.certificate.itemSelected.concatValue(variable.text);
+        } else {
+          selection.deleteFromDocument();
+          selection
+            .getRangeAt(0)
+            .insertNode(document.createTextNode(variable.text));
+        }
+      } else {
+        const textBox = new TextBox(
+          new Style(this.certificate.style),
+          variable.text
+        );
+        this.certificate.addTextBox(textBox);
+      }
+    },
     addTextBox() {
       const textBox = new TextBox(new Style(this.certificate.style));
       this.certificate.addTextBox(textBox);
-      console.log(textBox);
     },
     removeTextBox(textBox) {
       this.certificate.removeTextBox(textBox);

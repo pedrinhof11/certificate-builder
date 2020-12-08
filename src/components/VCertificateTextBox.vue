@@ -80,7 +80,15 @@ export default {
       const paste = (event.clipboardData || window.clipboardData).getData(
         "text"
       );
-      event.target.textContent += paste;
+
+      const selection = window.getSelection();
+      if (!selection.rangeCount) {
+        event.target.textContent += paste;
+      } else {
+        selection.deleteFromDocument();
+        selection.getRangeAt(0).insertNode(document.createTextNode(paste));
+      }
+
       event.preventDefault();
     }
   }
